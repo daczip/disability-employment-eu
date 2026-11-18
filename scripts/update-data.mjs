@@ -24,13 +24,14 @@ const SOURCES = {
   demo_pjangroup: `demo_pjangroup/A.NR.T+M+F.Y20-24+Y25-29+Y30-34+Y35-39+Y40-44+Y45-49+Y50-54+Y55-59+Y60-64.`,
   // Munkaerő-felmérés (LFS), a fogyatékossági kérdés kétévente (2022, 2024, ...). Külön blokk, a becslésbe nem kerül be.
   // Labour Force Survey, disability question every two years. A separate block; not used in the estimate.
-  lfsa_argaeddl: `lfsa_argaeddl/A.TOTAL+NONE+SOME+SEV+SM_SEV.TOTAL.Y20-64.T+M+F.PC.`,
+  lfsa_argaeddl: `lfsa_argaeddl/A.TOTAL+NONE+SOME+SEV+SM_SEV.TOTAL.Y20-64+Y25-54+Y55-64.T+M+F.PC.`,
   lfsa_ipgaeddl: `lfsa_ipgaeddl/A.TOTAL.TOTAL+NONE+SOME+SEV+SM_SEV.Y20-64.T+M+F.PC.`,
-  lfsa_urgaeddl: `lfsa_urgaeddl/A.TOTAL.TOTAL+NONE+SOME+SEV+SM_SEV.Y20-64.T+M+F.PC.`,
+  lfsa_urgaeddl: `lfsa_urgaeddl/A.TOTAL.TOTAL+NONE+SOME+SEV+SM_SEV.Y20-64+Y25-54+Y55-64.T+M+F.PC.`,
   lfsa_sup_dl: `lfsa_sup_dl/A.SLACK+NSEEK_AVL.TOTAL+NONE+SM_SEV.Y15-74.T+M+F.PC_ELF+THS_PER.`,
   lfsa_egasdl: `lfsa_egasdl/A.TOTAL+SM_SEV.EMP.Y20-64.T+M+F.THS_PER.`,
 };
 const LFS_LEVELS = ['TOTAL', 'NONE', 'SOME', 'SEV', 'SM_SEV'];
+const AGE_BANDS = ['Y25-54', 'Y55-64'];
 // 20–64 éves arány közelítése korsávokból, ha a hivatalos érték hiányzik.
 // Approximating the 20–64 share from age bands where the official value is missing.
 const BANDS = [
@@ -222,6 +223,12 @@ export function buildLfs(tables) {
   take('lfsa_argaeddl', d => `act.${d.lev_limit}.${d.sex}`, base);
   take('lfsa_ipgaeddl', d => `inact.${d.lev_limit}.${d.sex}`, base);
   take('lfsa_urgaeddl', d => `unemp.${d.lev_limit}.${d.sex}`, base);
+  // Korcsoportok (25–54, 55–64): aktivitási és munkanélküliségi ráta a korlátozottakra és a nem korlátozottakra;
+  // a foglalkoztatási rátát az oldal számolja (aktivitási ráta × (1 − munkanélküliségi ráta)).
+  // Age groups 25–54 and 55–64: activity and unemployment rates; the page derives the employment rate.
+  const band = d => AGE_BANDS.includes(d.age) && d.isced11 === 'TOTAL' && d.unit === 'PC' && (d.lev_limit === 'SM_SEV' || d.lev_limit === 'NONE');
+  take('lfsa_argaeddl', d => `act.${d.lev_limit}.${d.sex}.${d.age}`, band);
+  take('lfsa_urgaeddl', d => `unemp.${d.lev_limit}.${d.sex}.${d.age}`, band);
   take('lfsa_sup_dl', d => `slack.${d.lev_limit}.${d.sex}`, d => d.wstatus === 'SLACK' && d.unit === 'PC_ELF' && d.age === 'Y15-74');
   take('lfsa_sup_dl', d => `nseek.${d.lev_limit}.${d.sex}`, d => d.wstatus === 'NSEEK_AVL' && d.unit === 'THS_PER' && d.age === 'Y15-74');
   take('lfsa_egasdl', d => `empth.${d.lev_limit}.${d.sex}`, d => d.wstatus === 'EMP' && d.unit === 'THS_PER' && d.age === 'Y20-64' && (d.lev_limit === 'SM_SEV' || d.lev_limit === 'TOTAL'));
