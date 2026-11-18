@@ -8,8 +8,11 @@ Egyetlen statikus fájl (`index.html`), külső függőség nélkül.
 1. Hozz létre egy új, nyilvános repót, és töltsd fel a mappa teljes tartalmát (a `.github` mappával együtt).
 2. Settings → Pages → Source: „Deploy from a branch", Branch: `main`, mappa: `/ (root)`.
 3. Az oldal néhány perc múlva elérhető: `https://<felhasználónév>.github.io/<repo>/`.
-4. Megosztási előnézet (LinkedIn): az `index.html` és az `orszagprofilok.html` fejlécében az `og:image` sorban cseréld a
-   `FELHASZNALONEV` és `REPONEV` szót a saját adataidra. A kép az `og-image.png`.
+4. Megosztási előnézet (LinkedIn): az `og:image` sor a két HTML-fájlban a `https://daczip.github.io/disability-employment-eu/og-image.png`
+   címre mutat; más repónévnél ezt is át kell írni.
+5. Az automatikus adatfrissítéshez a munkafolyamat-fájlnak pontosan a `.github/workflows/update-data.yml` útvonalon kell lennie (a repó gyökerében).
+
+Élő változat: https://daczip.github.io/disability-employment-eu/
 
 ## Módszer
 
@@ -101,6 +104,16 @@ a két lap között megmarad (`orszagprofilok.html#HU-hu`).
 - Források: EDE-országjelentések (2024. novemberi állapot), DOTCOM (2025. október), nemzeti források; országonként
   kattintható listában. 2026 novemberében 24 ország kulcsadatait (bértámogatás, hozzájárulás, friss reformok) nemzeti
   forrásból ellenőriztük; a korábbi két „ellenőrzés alatt” pont (ciprusi ösztönző, román 127/2024. rendelet) lezárult.
+
+## Foglalkoztatási ráta korcsoportonként (2026. november 18.)
+Az „Akik nem dolgoznak” blokk új panele a korlátozottak és a nem korlátozottak foglalkoztatási rátáját mutatja 25–54 és 55–64 éves korban (összevetésül 20–64), országrangsorral és a kiválasztott ország korcsoportos táblájával. Forrás: `lfsa_argaeddl` (aktivitási ráta) és `lfsa_urgaeddl` (munkanélküliségi ráta), 2022 és 2024. Közvetlen, korcsoportos foglalkoztatási ráta fogyatékosság szerint nincs 2022/2024-re (a `hlth_dlm010` csak 2011), ezért a rátát az oldal számolja: aktivitási ráta × (1 − munkanélküliségi ráta); a kerekítés miatt legfeljebb néhány tized százalékpont az eltérés.
+- 25 év alatt a korlátozottak munkanélküliségi rátája szinte mindenhol közölhetetlen (kis minta), ezért a fiatal korcsoport kimaradt.
+- Hiányok: 25–54 évesek 2024: BG, MT (2022: BG, EL, MT); 55–64 évesek 2024: BG, EL, IE, LU, MT, RO, SK (2022: BG, IE, LV, MT, PL, RO, SK). Ezek „nincs adat”-ként jelennek meg.
+- A frissítő szkript a korcsoportokat is letölti (`act.{SM_SEV|NONE}.{T|M|F}.{Y25-54|Y55-64}`, `unemp.…`), így a havi frissítés ezt a panelt is frissíti.
+
+## Átlépés a nyílt munkaerőpiacra (2026. november 18.)
+
+Minden országprofilban új blokk mutatja, van-e a védett foglalkoztatásból kivezető célzott eszköz (van: 11 ország; részleges, tervezett vagy megszűnt: 10; nem ismert: 6), és közölnek-e mért eredményt (9 ország). Források: EDE-országjelentések (2024), EDE-szintézis, valamint 14 országra célzott nemzeti forráskutatás. Az arányok eltérő módon mértek, ezért nem rangsoroljuk őket.
 
 ## Felület és akadálymentesség (2026. november 17.)
 
